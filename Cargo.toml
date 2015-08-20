@@ -1,0 +1,12 @@
+[package]
+
+name = "bolts"
+description = "A rust static site generator"
+repository = "https://github.com/ryanr1230/bolts"
+version = "0.1.0"
+authors = ["Ryan Rice <ryanr1230@gmail.com>"]
+license = "MIT"
+
+[dependencies]
+
+hoedown = "3.0.3"
