@@ -11,18 +11,12 @@ use hoedown::renderer::html::Html;
 use hoedown::renderer::html;
 use hoedown::renderer::Render;
 use hoedown::Buffer;
+
 #[allow(unused_must_use)]
 fn main() {
     let markdown_path : &'static str = "index.markdown";
-    let markdown_buffer = match parse_markdown(markdown_path) {
-        Err(why) => panic!("Couldn't read from markdown file {}: {}", markdown_path,
-                           Error::description(&why)),
-        Ok(markdown_parsed) => markdown_parsed,
-    };
-    let mut out_file = match create_out_file(markdown_path) {
-        Err(why) => panic!("Couldn't create output file: {}", Error::description(&why)),
-        Ok(file) => file,
-    };
+    let markdown_buffer = parse_markdown(markdown_path).unwrap(); 
+    let mut out_file = create_out_file(markdown_path).unwrap();
     out_file.write(markdown_buffer.as_ref());
 }
 
