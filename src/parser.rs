@@ -1,5 +1,3 @@
-extern crate hoedown;
-
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::Result;
@@ -38,6 +36,7 @@ impl Parser for MarkdownParser {
         MarkdownParser { markdown_path: path, new_extension: "html" }
     }
 
+    #[allow(unused_must_use)]
     fn run<'a>(&self) {
         let markdown_path_str = self.path();
         let output_file_extension = self.new_extension();
@@ -45,7 +44,6 @@ impl Parser for MarkdownParser {
         let markdown_buffer = self.parse(markdown_path).unwrap();
         let mut out_file = self.create_out_file(markdown_path, output_file_extension).unwrap();
         out_file.write(markdown_buffer.as_ref());
-        ()
     }
 
     fn path(&self) -> &'static str {
