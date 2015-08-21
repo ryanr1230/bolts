@@ -1,11 +1,11 @@
 extern crate hoedown;
 
-use std::error::Error;
 use std::fs::File;
+use std::io::Error;
+use std::io::ErrorKind;
 use std::io::prelude::*;
 use std::io::Result;
 use std::path::Path;
-use std::io;
 use hoedown::Markdown;
 use hoedown::renderer::html::Html;
 use hoedown::renderer::html;
@@ -30,8 +30,8 @@ fn convert_filename<'a>(markdown_filename: &'a str) -> Result<String> {
     let string_filename = String::from(markdown_filename);
     let index = match string_filename.rfind(".markdown") {
         Some(i) => i,
-        //TODO: make new error type, don't use io::Error
-        None => return Err(io::Error::new(io::ErrorKind::Other, ".markdown not found in filepath name")),
+        //TODO: make new error type, don't use Error
+        None => return Err(Error::new(ErrorKind::Other, ".markdown not found in filepath name")),
     };
     let actual_name = &string_filename[..index];
     return Ok(format!("{}{}",actual_name,".html"));
