@@ -1,13 +1,13 @@
 extern crate hoedown;
 
-mod parser;
+mod parsers;
+mod generator;
 
-use parser::MarkdownParser;
-use parser::Parser;
+use generator::Generator;
 
 
 fn main() {
-    let parser: MarkdownParser = Parser::new("index.markdown");
+    let generator: Generator = Generator::new("index.markdown");
 
-    parser.run();
+    generator.generate();
 }
