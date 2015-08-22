@@ -7,20 +7,20 @@ use std::path::Path;
 use parsers;
 use parsers::ParserType;
 
-pub struct Generator { path: &'static str, new_extension: &'static str }
+pub struct Generator { path: &'static str }
 
 impl Generator {
     pub fn new(path: &'static str) -> Generator {
-        Generator { path: path, new_extension: "html" }
+        Generator { path: path }
     }
 
-    fn determine_type(path: &Path) -> Result<ParserType> {
+    fn determine_type(&self, path: &Path) -> Result<(&'static str, ParserType)> {
         let extension_str = match path.extension() {
             Some(string) => string,
             None => return Err(Error::new(ErrorKind::Other, "no parser available for no extension")),
         };
         match extension_str.to_str().unwrap() {
-            "markdown" => return Ok(parsers::markdown_parse),
+            "markdown" => return Ok(("html", parsers::markdown_parse)),
             _ => return Err(Error::new(ErrorKind::Other, "no parser available for this extension")),
         };
     }
@@ -35,19 +35,14 @@ impl Generator {
     #[allow(unused_must_use)]
     pub fn generate<'a>(&self) {
         let path_str = self.path();
-        let output_file_extension = self.new_extension();
         let path = Path::new(path_str);
-        let parser: ParserType = Generator::determine_type(&path).unwrap();
-        let bytevec = parser(&path).unwrap();
-        let mut out_file = self.create_out_file(path, output_file_extension).unwrap();
+        let parser = self.determine_type(&path).unwrap();
+        let bytevec = parser.1(&path).unwrap();
+        let mut out_file = self.create_out_file(path, parser.0).unwrap();
         out_file.write(&bytevec[..]);
     }
 
     fn path(&self) -> &'static str {
         self.path
-    }
-
-    fn new_extension(&self) -> &'static str {
-        self.new_extension
     }
 }
