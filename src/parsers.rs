@@ -1,5 +1,3 @@
-use std::fs::File;
-use std::io::prelude::*;
 use std::io::Result;
 use std::path::Path;
 use hoedown::Markdown;
@@ -7,14 +5,11 @@ use hoedown::renderer::html::Html;
 use hoedown::renderer::html;
 use hoedown::renderer::Render;
 use hoedown::Buffer;
-
+use utils;
 pub type ParserType = fn(&Path) -> Result<Vec<u8>>;
 
 pub fn markdown_parse<'p>(path:&Path) -> Result<Vec<u8>> {
-    let mut markdown_file = try!(File::open(path));
-
-    let mut input_markdown = String::new();
-    try!(markdown_file.read_to_string(&mut input_markdown));
+    let input_markdown: String = try!(utils::read_file_to_string(path));
     let markdown_document = Markdown::new(&input_markdown);
     let mut html = Html::new(html::Flags::empty(), 0);
     let buffer: Buffer = html.render(&markdown_document);
