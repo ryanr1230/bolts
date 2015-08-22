@@ -13,6 +13,7 @@ use rustc_serialize::json::Json;
 use rustc_serialize::json::ToJson;
 use std::collections::BTreeMap;
 use std::io::Error;
+use std::path::Display;
 
 pub struct CargoInfo {
     project_name: String,
@@ -38,20 +39,23 @@ fn print_usage(program: &str, opts: Options) {
     print!("{}", opts.usage(&brief));
 }
 
+fn copy_default_config_file(filename: &str, home_dir: &Display, root_dir: &str) -> Result<(),Error> {
+    let new_config = &format!("{}/{}", root_dir, filename);
+    try!(fs::copy(format!("{}/.bolts/default_config/{}",home_dir, filename), new_config));
+    return Ok(());
+}
+
 fn copy_files(project_name: &str) -> Result<(),Error> {
     let home_dir = env::home_dir().unwrap();
     let current_dir = env::current_dir().unwrap();
     let root_dir: String = format!("{}/{}/",current_dir.display(),project_name);
     try!(fs::create_dir_all(&format!("{}/src",&root_dir)));
     //TODO: stop this, do recursively
-    let new_config = &format!("{}/config.rs", &root_dir);
-    try!(fs::copy(format!("{}/.bolts/default_config/config.rs",home_dir.display()), new_config));
-    let new_index = &format!("{}/index.md", &root_dir);
-    try!(fs::copy(format!("{}/.bolts/default_config/index.md",home_dir.display()), new_index));
-    let new_layout = &format!("{}/default_layout.hbs", &root_dir);
-    try!(fs::copy(format!("{}/.bolts/default_config/default_layout.hbs",home_dir.display()), new_layout));
-    let new_main = &format!("{}/src/main.rs", &root_dir);
-    try!(fs::copy(format!("{}/.bolts/default_config/src/main.rs",home_dir.display()), new_main));
+    let home_dir_display: Display = home_dir.display();
+    try!(copy_default_config_file("config.rs", &home_dir_display, &root_dir));
+    try!(copy_default_config_file("index.md", &home_dir_display, &root_dir));
+    try!(copy_default_config_file("default_layout.hbs", &home_dir_display, &root_dir));
+    try!(copy_default_config_file("src/main.rs", &home_dir_display, &root_dir));
     let mut processor: Handlebars = Handlebars::new();
     processor.register_template_string("Cargo.toml.default", String::from("[package]
 name = \"{{{project_name}}}\"
