@@ -2,6 +2,7 @@ extern crate getopts;
 extern crate handlebars;
 extern crate rustc_serialize;
 
+use std::thread;
 use std::fs::File;
 use std::io::Write;
 use std::fs;
@@ -14,6 +15,7 @@ use rustc_serialize::json::ToJson;
 use std::collections::BTreeMap;
 use std::io::Error;
 use std::path::Display;
+use std::process::ExitStatus;
 
 pub struct CargoInfo {
     project_name: String,
@@ -54,6 +56,7 @@ fn copy_files(project_name: &str) -> Result<(),Error> {
     let home_dir_display: Display = home_dir.display();
     try!(copy_default_config_file("config.rs", &home_dir_display, &root_dir));
     try!(copy_default_config_file("index.md", &home_dir_display, &root_dir));
+    try!(copy_default_config_file(".gitignore", &home_dir_display, &root_dir));
     try!(copy_default_config_file("default_layout.hbs", &home_dir_display, &root_dir));
     try!(copy_default_config_file("src/main.rs", &home_dir_display, &root_dir));
     let mut processor: Handlebars = Handlebars::new();
@@ -70,11 +73,15 @@ git = \"https://github.com/ryanr1230/bolts.git\"")).ok().unwrap();
     return Ok(());
 }
 
+#[allow(unreachable_code)]
 fn run_site_gen() -> Result<(), Error> {
-    let compiling_status = Command::new("cargo").arg("build").status().unwrap();
-    println!("Compiling exited with: {}", compiling_status);
-    let running_status = Command::new("cargo").arg("run").status().unwrap();
-    println!("Running exited with: {}", running_status);
+    loop {
+        let running_status: ExitStatus = Command::new("cargo").arg("run").status().unwrap();
+        if !running_status.success() {
+            println!("Running exited with: {}", running_status);
+        }
+        thread::sleep_ms(4000);
+    }
     return Ok(());
 }
 
