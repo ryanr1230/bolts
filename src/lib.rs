@@ -9,9 +9,7 @@ mod processor;
 use std::path::Path;
 use handlebars::Handlebars;
 
-#[test]
-fn test_run_defaults() {
-    let layout_path = Path::new("default_layout.hbs");
+pub fn run(layout_path: &Path, markdown_file: &'static str) {
     let layout_as_string: String = utils::read_file_to_string(layout_path).unwrap();
     let mut processor: Handlebars = Handlebars::new();
 
@@ -19,5 +17,5 @@ fn test_run_defaults() {
         .ok().unwrap();
 
 
-    generator::generate("index.md", &mut processor, &utils::path_filename(layout_path).unwrap());
+    generator::generate(markdown_file, &mut processor, &utils::path_filename(layout_path).unwrap());
 }
