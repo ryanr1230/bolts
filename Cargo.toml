@@ -7,6 +7,11 @@ version = "0.1.0"
 authors = ["Ryan Rice <ryanr1230@gmail.com>"]
 license = "MIT"
 
+[lib]
+
+name = "bolts"
+path = "src/lib.rs"
+
 [dependencies]
 
 hoedown = "3.0.3"

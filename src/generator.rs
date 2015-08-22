@@ -29,7 +29,6 @@ fn create_out_file<'a>(path: &Path, new_extension: &'a str) -> Result<File> {
     return Ok(file);
 }
 
-#[allow(unused_must_use)]
 pub fn generate<'a>(path_str: &'static str, processor: &mut Handlebars, layout_name: &'a str) {
     let path = Path::new(path_str);
     let parser = determine_type(&path).unwrap();
@@ -38,5 +37,5 @@ pub fn generate<'a>(path_str: &'static str, processor: &mut Handlebars, layout_n
     let utf8_output = String::from_utf8(bytevec).unwrap();
     let data = Layout::new(utf8_output,"footer".to_string());
     let to_write = processor.render(layout_name, &data);
-    out_file.write(to_write.unwrap().as_ref());
+    out_file.write(to_write.unwrap().as_ref()).unwrap();
 }
