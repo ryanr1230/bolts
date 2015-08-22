@@ -19,6 +19,6 @@ fn main() {
     processor.register_template_string(&utils::path_filename(layout_path).unwrap(), layout_as_string)
         .ok().unwrap();
 
-        
-    generator::generate("index.markdown", &mut processor, &utils::path_filename(layout_path).unwrap());
+
+    generator::generate("index.md", &mut processor, &utils::path_filename(layout_path).unwrap());
 }

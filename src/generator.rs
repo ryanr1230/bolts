@@ -16,7 +16,7 @@ fn determine_type(path: &Path) -> Result<(&'static str, ParserType)> {
         None => return Err(Error::new(ErrorKind::Other, "no parser available for no extension")),
     };
     match extension_str.to_str().unwrap() {
-        "markdown" => return Ok(("html", parsers::markdown_parse)),
+        "markdown" | "md" => return Ok(("html", parsers::markdown_parse)),
         //TODO: new Error type
         _ => return Err(Error::new(ErrorKind::Other, "no parser available for this extension")),
     };
