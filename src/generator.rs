@@ -35,7 +35,7 @@ pub fn generate<'a>(path_str: &'static str, processor: &mut Handlebars, layout_n
     let bytevec = parser.1(&path).unwrap();
     let mut out_file = create_out_file(path, parser.0).unwrap();
     let utf8_output = String::from_utf8(bytevec).unwrap();
-    let data = Layout::new(utf8_output,"footer".to_string());
+    let data = Layout::new(utf8_output,"".to_string(), "".to_string());
     let to_write = processor.render(layout_name, &data);
     out_file.write(to_write.unwrap().as_ref()).unwrap();
 }

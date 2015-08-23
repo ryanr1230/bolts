@@ -2,6 +2,7 @@ extern crate getopts;
 extern crate handlebars;
 extern crate rustc_serialize;
 
+use std::path::Path;
 use std::thread;
 use std::fs::File;
 use std::io::Write;
@@ -37,7 +38,8 @@ impl ToJson for CargoInfo {
 
 
 fn print_usage(program: &str, opts: Options) {
-    let brief = format!("Usage: {} init PROJECT_NAME\n       {} run", program, program);
+    let brief = format!(
+        "Usage: {} init PROJECT_NAME\n       {} run\n       {} compile", program, program, program);
     print!("{}", opts.usage(&brief));
 }
 
@@ -60,6 +62,7 @@ fn copy_files(project_name: &str) -> Result<(),Error> {
     try!(copy_default_config_file("default_layout.hbs", &home_dir_display, &root_dir));
     try!(copy_default_config_file("src/main.rs", &home_dir_display, &root_dir));
     let mut processor: Handlebars = Handlebars::new();
+
     processor.register_template_string("Cargo.toml.default", String::from("[package]
 name = \"{{{project_name}}}\"
 version = \"0.0.0\"
@@ -73,10 +76,32 @@ git = \"https://github.com/ryanr1230/bolts.git\"")).ok().unwrap();
     return Ok(());
 }
 
+fn cd_into(path: &Path) -> Result<(), Error> {
+    let mut current_dir = env::current_dir().unwrap().clone();
+    current_dir.push(path);
+    try!(env::set_current_dir(current_dir.as_path()));
+    Ok(())
+}
+
+fn compile() -> Result<(), Error> {
+    try!(cd_into(Path::new("config")));
+    let compiling_status: ExitStatus = Command::new("cargo").arg("build").status().unwrap();
+    if !compiling_status.success() {
+        panic!("Couldn't compile configuration runner");
+    }
+    try!(cd_into(Path::new("..")));
+    Ok(())
+}
+
 #[allow(unreachable_code)]
 fn run_site_gen() -> Result<(), Error> {
+    try!(compile());
+    let current_dir_buf = env::current_dir().unwrap();
+    let project_name = current_dir_buf.file_name().unwrap().to_str().unwrap();
     loop {
-        let running_status: ExitStatus = Command::new("cargo").arg("run").status().unwrap();
+        let running_status: ExitStatus =
+            Command::new(format!("{}/config/target/debug/{}", current_dir_buf.display(), project_name))
+                .status().unwrap();
         if !running_status.success() {
             println!("Running exited with: {}", running_status);
         }
@@ -103,6 +128,7 @@ fn main() {
     match command {
         "init" => copy_files(&args[2].clone()).unwrap(),
         "run" => run_site_gen().unwrap(),
+        "compile" => compile().unwrap(),
         _ => print_usage(&program, opts),
     }
 }

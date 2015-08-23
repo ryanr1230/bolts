@@ -7,6 +7,6 @@
 # Executables
 *.exe
 
-Cargo.lock
+config/Cargo.lock
 
-/target/
+config/target/
