@@ -9,8 +9,8 @@ build:
 install:
 	$(MAKE) build
 	mkdir -p ~/.bolts/
-	cp -r ./default_config/ ~/.bolts
+	cp -r ./default_config ~/.bolts
 	chmod -R a+w+r ~/.bolts
-	cp ./target/release/bolts /usr/bin/bolts
+	cp ./target/release/bolts /usr/local/bin/bolts
 
 .PHONY: build install
