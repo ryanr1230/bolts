@@ -38,8 +38,8 @@ impl ToJson for CargoInfo {
 
 
 fn print_usage(program: &str, opts: Options) {
-    let brief = format!(
-        "Usage: {} init PROJECT_NAME\n       {} run\n       {} compile", program, program, program);
+    let brief = format!("Usage: {} init PROJECT_NAME\n       {} run\n       {} compile\n       {} update",
+        program, program, program, program);
     print!("{}", opts.usage(&brief));
 }
 
@@ -80,6 +80,16 @@ fn cd_into(path: &Path) -> Result<(), Error> {
     let mut current_dir = env::current_dir().unwrap().clone();
     current_dir.push(path);
     try!(env::set_current_dir(current_dir.as_path()));
+    Ok(())
+}
+
+fn update() -> Result<(), Error> {
+    try!(cd_into(Path::new("config")));
+    let updating_status: ExitStatus = Command::new("cargo").arg("update").arg("-p").arg("bolts").status().unwrap();
+    if !updating_status.success() {
+        panic!("Couldn't update bolts for configuration runner");
+    }
+    try!(cd_into(Path::new("..")));
     Ok(())
 }
 
@@ -131,6 +141,7 @@ fn main() {
         "init" => copy_files(&args[2].clone()).unwrap(),
         "run" => run_site_gen().unwrap(),
         "compile" => compile().unwrap(),
+        "update" => update().unwrap(),
         _ => print_usage(&program, opts),
     }
 }
