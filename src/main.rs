@@ -53,14 +53,14 @@ fn copy_files(project_name: &str) -> Result<(),Error> {
     let home_dir = env::home_dir().unwrap();
     let current_dir = env::current_dir().unwrap();
     let root_dir: String = format!("{}/{}/",current_dir.display(),project_name);
-    try!(fs::create_dir_all(&format!("{}/src",&root_dir)));
+    try!(fs::create_dir_all(&format!("{}/config/src",&root_dir)));
     //TODO: stop this, do recursively
     let home_dir_display: Display = home_dir.display();
-    try!(copy_default_config_file("config.rs", &home_dir_display, &root_dir));
+    try!(copy_default_config_file("config/config.rs", &home_dir_display, &root_dir));
     try!(copy_default_config_file("index.md", &home_dir_display, &root_dir));
     try!(copy_default_config_file(".gitignore", &home_dir_display, &root_dir));
     try!(copy_default_config_file("default_layout.hbs", &home_dir_display, &root_dir));
-    try!(copy_default_config_file("src/main.rs", &home_dir_display, &root_dir));
+    try!(copy_default_config_file("config/src/main.rs", &home_dir_display, &root_dir));
     let mut processor: Handlebars = Handlebars::new();
 
     processor.register_template_string("Cargo.toml.default", String::from("[package]
@@ -71,7 +71,7 @@ version = \"0.0.0\"
 git = \"https://github.com/ryanr1230/bolts.git\"")).ok().unwrap();
     let cargo_info: CargoInfo = CargoInfo::new(String::from(project_name));
     let to_write = processor.render("Cargo.toml.default", &cargo_info);
-    let mut cargo_file = try!(File::create(format!("{}{}",&root_dir, "/Cargo.toml")));
+    let mut cargo_file = try!(File::create(format!("{}{}",&root_dir, "/config/Cargo.toml")));
     cargo_file.write(to_write.unwrap().as_ref()).unwrap();
     return Ok(());
 }
@@ -104,6 +104,8 @@ fn run_site_gen() -> Result<(), Error> {
                 .status().unwrap();
         if !running_status.success() {
             println!("Running exited with: {}", running_status);
+        } else {
+            println!("Generated site");
         }
         thread::sleep_ms(4000);
     }
