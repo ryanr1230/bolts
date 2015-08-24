@@ -8,7 +8,7 @@ a rust static site generator
  $ cd /directory/for/your/project/to/be/in
  $ bolts init PROJECT_NAME
  $ cd PROJECT_NAME
- $ sudo bolts run
+ $ bolts run
 ```
 
 ### All commands:
