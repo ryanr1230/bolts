@@ -1,15 +1,16 @@
-use std::io::Result;
 use std::path::Path;
 use hoedown::Markdown;
 use hoedown::renderer::html::Html;
 use hoedown::renderer::html;
 use hoedown::renderer::Render;
 use hoedown::Buffer;
-use utils;
-pub type ParserType = fn(&Path) -> Result<Vec<u8>>;
+use common;
+use common::SiteGenResult;
 
-pub fn markdown_parse<'p>(path:&Path) -> Result<Vec<u8>> {
-    let input_markdown: String = try!(utils::read_file_to_string(path));
+pub type ParserType = fn(&Path) -> SiteGenResult<Vec<u8>>;
+
+pub fn markdown_parse<'p>(path:&Path) -> SiteGenResult<Vec<u8>> {
+    let input_markdown: String = try!(common::read_file_to_string(path));
     let markdown_document = Markdown::new(&input_markdown);
     let mut html = Html::new(html::Flags::empty(), 0);
     let buffer: Buffer = html.render(&markdown_document);

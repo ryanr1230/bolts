@@ -1,7 +1,7 @@
 extern crate getopts;
 extern crate handlebars;
 extern crate rustc_serialize;
-
+#[macro_use] mod common;
 use std::path::Path;
 use std::thread;
 use std::fs::File;
@@ -14,9 +14,9 @@ use handlebars::Handlebars;
 use rustc_serialize::json::Json;
 use rustc_serialize::json::ToJson;
 use std::collections::BTreeMap;
-use std::io::Error;
 use std::path::Display;
 use std::process::ExitStatus;
+use common::SiteGenResult;
 
 pub struct CargoInfo {
     project_name: String,
@@ -43,13 +43,13 @@ fn print_usage(program: &str, opts: Options) {
     print!("{}", opts.usage(&brief));
 }
 
-fn copy_default_config_file(filename: &str, home_dir: &Display, root_dir: &str) -> Result<(),Error> {
+fn copy_default_config_file(filename: &str, home_dir: &Display, root_dir: &str) -> SiteGenResult<()> {
     let new_config = &format!("{}/{}", root_dir, filename);
     try!(fs::copy(format!("{}/.bolts/default_config/{}",home_dir, filename), new_config));
     return Ok(());
 }
 
-fn copy_files(project_name: &str) -> Result<(),Error> {
+fn copy_files(project_name: &str) -> SiteGenResult<()> {
     let home_dir = env::home_dir().unwrap();
     let current_dir = env::current_dir().unwrap();
     let root_dir: String = format!("{}/{}/",current_dir.display(),project_name);
@@ -76,14 +76,14 @@ git = \"https://github.com/ryanr1230/bolts.git\"")).ok().unwrap();
     return Ok(());
 }
 
-fn cd_into(path: &Path) -> Result<(), Error> {
+fn cd_into(path: &Path) -> SiteGenResult<()> {
     let mut current_dir = env::current_dir().unwrap().clone();
     current_dir.push(path);
     try!(env::set_current_dir(current_dir.as_path()));
     Ok(())
 }
 
-fn update() -> Result<(), Error> {
+fn update() -> SiteGenResult<()> {
     try!(cd_into(Path::new("config")));
     let updating_status: ExitStatus = Command::new("cargo").arg("update").arg("-p").arg("bolts").status().unwrap();
     if !updating_status.success() {
@@ -93,7 +93,7 @@ fn update() -> Result<(), Error> {
     Ok(())
 }
 
-fn compile() -> Result<(), Error> {
+fn compile() -> SiteGenResult<()> {
     try!(cd_into(Path::new("config")));
     let compiling_status: ExitStatus = Command::new("cargo").arg("build").status().unwrap();
     if !compiling_status.success() {
@@ -104,7 +104,7 @@ fn compile() -> Result<(), Error> {
 }
 
 #[allow(unreachable_code)]
-fn run_site_gen() -> Result<(), Error> {
+fn run_site_gen() -> SiteGenResult<()> {
     try!(compile());
     let current_dir_buf = env::current_dir().unwrap();
     let project_name = current_dir_buf.file_name().unwrap().to_str().unwrap();
