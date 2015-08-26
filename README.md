@@ -17,3 +17,8 @@ a rust static site generator
  - `bolts update`: updates bolts library for your local site
  - `bolts compile`: recompiles your configuration files to take effect
  - `bolts -h`: --help lists these commands
+
+### To update the default config and bolts command line tool:
+ - redownload
+ - redo sudo make install
+ - Should probably add a script to do this at some point
