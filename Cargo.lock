@@ -5,6 +5,7 @@ dependencies = [
  "getopts 0.2.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "handlebars 0.9.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "hoedown 3.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "maplit 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -80,6 +81,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "libc 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "maplit"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "memchr"

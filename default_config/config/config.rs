@@ -5,4 +5,7 @@ pub mod config {
     pub fn markdown_file() -> &'static str {
         "index.md"
     }
+    pub fn partial_path() -> &'static str {
+        "partial.hbs"
+    }
 }
