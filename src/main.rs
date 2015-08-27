@@ -1,8 +1,10 @@
 extern crate getopts;
-extern crate handlebars;
+extern crate rumblebars;
 extern crate rustc_serialize;
-#[macro_use] extern crate maplit;
 #[macro_use] mod common;
+
+use rustc_serialize::json::Json;
+use rumblebars::Template;
 use std::path::Path;
 use std::thread;
 use std::fs::File;
@@ -11,10 +13,7 @@ use std::fs;
 use getopts::Options;
 use std::env;
 use std::process::Command;
-use handlebars::Handlebars;
-use rustc_serialize::json::Json;
 use rustc_serialize::json::ToJson;
-use std::collections::BTreeMap;
 use std::path::Display;
 use std::process::ExitStatus;
 use common::SiteGenResult;
@@ -44,20 +43,16 @@ fn copy_files(project_name: &str) -> SiteGenResult<()> {
     try!(copy_default_config_file("default_layout.hbs", &home_dir_display, &root_dir));
     try!(copy_default_config_file("header.hbs", &home_dir_display, &root_dir));
     try!(copy_default_config_file("config/src/main.rs", &home_dir_display, &root_dir));
-    let mut processor: Handlebars = Handlebars::new();
 
-    processor.register_template_string("Cargo.toml.default", String::from("[package]
-name = \"{{{project_name}}}\"
+    let cargo_info: String = String::from(format!("{}{}{}","[package]
+name = \"",&project_name,"\"
 version = \"0.0.0\"
 
 [dependencies.bolts]
-git = \"https://github.com/ryanr1230/bolts.git\"")).ok().unwrap();
-    let cargo_info = btreemap! {
-        String::from("project_name") => String::from(project_name)
-    };
-    let to_write = processor.render("Cargo.toml.default", &cargo_info);
+git = \"https://github.com/ryanr1230/bolts.git\""));
+
     let mut cargo_file = try!(File::create(format!("{}{}",&root_dir, "/config/Cargo.toml")));
-    cargo_file.write(to_write.unwrap().as_ref()).unwrap();
+    cargo_file.write(cargo_info.as_ref()).unwrap();
     return Ok(());
 }
 

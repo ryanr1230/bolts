@@ -3,11 +3,15 @@ use std::io::prelude::*;
 use std::path::Path;
 use parsers;
 use parsers::ParserType;
-use handlebars::Handlebars;
+use rumblebars;
+use rumblebars::EvalContext;
+use rumblebars::Template;
 use common::SiteGenResult;
 use common::SiteGenError;
-use std::collections::BTreeMap;
-
+use rustc_serialize;
+use rustc_serialize::json;
+use rustc_serialize::json::Json;
+use std::collections::HashMap;
 
 fn determine_type(path: &Path) -> SiteGenResult<(&'static str, ParserType)> {
     let extension_str = try_option_empty_error!(path.extension(), String::from("no parser available for no extension"));
@@ -24,16 +28,20 @@ fn create_out_file<'a>(path: &Path, new_extension: &'a str) -> SiteGenResult<Fil
     return Ok(file);
 }
 
-pub fn generate<'a>(path: &Path, processor: &mut Handlebars, partial_name: &'a str, parent_name: &'a str) {
+pub fn generate<'a>(path: &Path,
+                    layout_template: &Template,
+                    context: &EvalContext) -> SiteGenResult<()>{
     let parser = determine_type(&path).unwrap();
     let bytevec = parser.1(&path).unwrap();
     let mut out_file = create_out_file(path, parser.0).unwrap();
     let utf8_output = String::from_utf8(bytevec).unwrap();
-    let layout_map: BTreeMap<String, String> = btreemap! {
-        String::from("context") => utf8_output
-    };
-    let layout_map_mut: &mut BTreeMap<String,String> = &mut layout_map.clone();
-    layout_map_mut.insert(String::from(partial_name), String::from(partial_name));
-    let to_write = processor.render(parent_name, &layout_map_mut.clone());
-    out_file.write(to_write.unwrap().as_ref()).unwrap();
+
+    let mut input_context_builder = HashMap::new();
+    input_context_builder.insert("context", &utf8_output);
+    let input_context = input_context_builder.clone();
+    let input_context_string: String = try!(json::encode(&input_context));
+    let input_context_json: Json = try!(Json::from_str(&input_context_string));
+    try!(layout_template.eval(&input_context_json, &mut out_file, context));
+
+    Ok(())
 }

@@ -19,7 +19,9 @@ path = "src/main.rs"
 [dependencies]
 
 hoedown = "3.0.3"
-handlebars = "0.9.3"
 rustc-serialize = "0.3.16"
 getopts = "0.2"
-maplit = "0.1.2"
+
+[dependencies.rumblebars]
+git = "https://github.com/nicolas-cherel/rumblebars.git"
+#git = "file:///Users/ryan/Documents/rumblebars"

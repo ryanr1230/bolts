@@ -6,6 +6,6 @@ pub mod config {
         "index.md"
     }
     pub fn partial_path() -> &'static str {
-        "partial.hbs"
+        "header.hbs"
     }
 }
