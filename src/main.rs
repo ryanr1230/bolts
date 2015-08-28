@@ -1,10 +1,8 @@
 extern crate getopts;
 extern crate rumblebars;
 extern crate rustc_serialize;
-#[macro_use] mod common;
+#[allow(dead_code)] #[macro_use] mod common;
 
-use rustc_serialize::json::Json;
-use rumblebars::Template;
 use std::path::Path;
 use std::thread;
 use std::fs::File;
@@ -13,7 +11,6 @@ use std::fs;
 use getopts::Options;
 use std::env;
 use std::process::Command;
-use rustc_serialize::json::ToJson;
 use std::path::Display;
 use std::process::ExitStatus;
 use common::SiteGenResult;

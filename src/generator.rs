@@ -1,14 +1,11 @@
 use std::fs::File;
-use std::io::prelude::*;
 use std::path::Path;
 use parsers;
 use parsers::ParserType;
-use rumblebars;
 use rumblebars::EvalContext;
 use rumblebars::Template;
 use common::SiteGenResult;
 use common::SiteGenError;
-use rustc_serialize;
 use rustc_serialize::json;
 use rustc_serialize::json::Json;
 use std::collections::HashMap;

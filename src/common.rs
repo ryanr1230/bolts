@@ -1,5 +1,3 @@
-#![macro_export]
-
 use std::fs::File;
 use std::io::Read;
 use std::result::Result;
