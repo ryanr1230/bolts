@@ -4,7 +4,7 @@ version = "0.1.0"
 dependencies = [
  "getopts 0.2.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "hoedown 3.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "rumblebars 0.3.0 (git+file:///Users/ryan/Documents/rumblebars)",
+ "rumblebars 0.3.0 (git+https://github.com/nicolas-cherel/rumblebars.git)",
  "rustc-serialize 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -148,7 +148,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "rumblebars"
 version = "0.3.0"
-source = "git+file:///Users/ryan/Documents/rumblebars#02f11fc36b356e7b5601b2988ba6911a7ffa7202"
+source = "git+https://github.com/nicolas-cherel/rumblebars.git#2f3df2f6cfd0f0338e9b223ced05d0f8078ba0b0"
 dependencies = [
  "lazy_static 0.1.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "nc_rustlex_codegen 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",

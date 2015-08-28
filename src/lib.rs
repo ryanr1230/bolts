@@ -18,7 +18,6 @@ pub fn run(layout_path_str: &'static str, partial_path_str: &'static str, markdo
     let markdown_file = Path::new(markdown_file_str);
     let layout_template: Template = try!(common::create_template(layout_path));
     let _ = try!(common::register_partial(partial_path, &mut context));
-
     try!(generator::generate(markdown_file, &layout_template, &mut context));
     Ok(())
 }
