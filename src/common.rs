@@ -13,7 +13,6 @@ use rumblebars;
 use rustc_serialize::json;
 #[derive(Debug)]
 pub enum SiteGenError {
-//    RumblebarsParse(rumblebars::parse::ParseError),
     Io(io::Error),
     Other(String),
     JsonEncode(json::EncoderError),
@@ -27,11 +26,23 @@ impl From<io::Error> for SiteGenError {
 }
 
 
-/*impl From<(rumblebars::parse::ParseError, Option<String>)> for SiteGenError {
+/*
+If rumblebars::parse::ParseError becomes public
+
+impl From<(rumblebars::parse::ParseError, Option<String>)> for SiteGenError {
     fn from(e: (rumblebars::parse::ParseError, Option<String>)) -> SiteGenError {
         SiteGenError::RumblebarsParse(e.0)
     }
-}*/
+}
+
+
+impl From<rumblebars::parse::ParseError> for SiteGenError {
+    fn from(e: rumblebars::parse::ParseError) -> SiteGenError {
+        SiteGenError::RumblebarsParse(e)
+    }
+}
+
+*/
 
 impl From<json::ParserError> for SiteGenError {
     fn from(e: json::ParserError) -> SiteGenError {
@@ -44,12 +55,6 @@ impl From<json::EncoderError> for SiteGenError {
         SiteGenError::JsonEncode(e)
     }
 }
-
-/*impl From<rumblebars::parse::ParseError> for SiteGenError {
-    fn from(e: rumblebars::parse::ParseError) -> SiteGenError {
-        SiteGenError::RumblebarsParse(e)
-    }
-}*/
 
 pub type SiteGenResult<T> = Result<T, SiteGenError>;
 

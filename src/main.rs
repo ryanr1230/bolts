@@ -42,6 +42,7 @@ fn copy_files(project_name: &str) -> SiteGenResult<()> {
     try!(copy_default_config_file(".gitignore", &home_dir_display, &root_dir));
     try!(copy_default_config_file("default_layout.hbs", &home_dir_display, &root_dir));
     try!(copy_default_config_file("header.hbs", &home_dir_display, &root_dir));
+    try!(copy_default_config_file("footer.hbs", &home_dir_display, &root_dir));
     try!(copy_default_config_file("config/src/main.rs", &home_dir_display, &root_dir));
 
     let cargo_info: String = String::from(format!("{}{}{}","[package]

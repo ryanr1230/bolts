@@ -5,7 +5,7 @@ pub mod config {
     pub fn markdown_file() -> &'static str {
         "index.md"
     }
-    pub fn partial_path() -> &'static str {
-        "header.hbs"
+    pub fn partial_paths() -> Vec<&'static str> {
+        vec!["header.hbs", "footer.hbs"]
     }
 }
