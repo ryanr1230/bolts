@@ -8,9 +8,11 @@ use std::io;
 use rumblebars::Template;
 use rumblebars::EvalContext;
 use rumblebars;
+use rumblebars::ParseError;
 use rustc_serialize::json;
 #[derive(Debug)]
 pub enum SiteGenError {
+    RumblebarsParse(ParseError),
     Io(io::Error),
     Other(String),
     JsonEncode(json::EncoderError),
@@ -23,24 +25,18 @@ impl From<io::Error> for SiteGenError {
     }
 }
 
-
-/*
-If rumblebars::parse::ParseError becomes public
-
-impl From<(rumblebars::parse::ParseError, Option<String>)> for SiteGenError {
-    fn from(e: (rumblebars::parse::ParseError, Option<String>)) -> SiteGenError {
+impl From<(ParseError, Option<String>)> for SiteGenError {
+    fn from(e: (ParseError, Option<String>)) -> SiteGenError {
         SiteGenError::RumblebarsParse(e.0)
     }
 }
 
 
-impl From<rumblebars::parse::ParseError> for SiteGenError {
-    fn from(e: rumblebars::parse::ParseError) -> SiteGenError {
+impl From<ParseError> for SiteGenError {
+    fn from(e: ParseError) -> SiteGenError {
         SiteGenError::RumblebarsParse(e)
     }
 }
-
-*/
 
 impl From<json::ParserError> for SiteGenError {
     fn from(e: json::ParserError) -> SiteGenError {
@@ -75,7 +71,7 @@ macro_rules! try_option_empty_error {
 
 pub fn create_template(layout_path: &Path) -> SiteGenResult<Template> {
     let path_to_string = try!(read_file_to_string(layout_path));
-    let template = rumblebars::parse(&path_to_string).unwrap();
+    let template = try!(rumblebars::parse(&path_to_string));
     Ok(template)
 }
 
