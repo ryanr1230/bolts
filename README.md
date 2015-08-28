@@ -22,3 +22,6 @@ a rust static site generator
  - redownload
  - redo sudo make install
  - Should probably add a script to do this at some point
+
+Examples:
+ - [my website](http://ryanr.me) -- [on github](https://github.com/ryanr1230/ryanr1230.github.io)
