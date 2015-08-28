@@ -82,13 +82,17 @@ fn compile() -> SiteGenResult<()> {
 }
 
 #[allow(unreachable_code)]
-fn run_site_gen() -> SiteGenResult<()> {
+fn run_site_gen(exec_name: Option<String>) -> SiteGenResult<()> {
     try!(compile());
     let current_dir_buf = env::current_dir().unwrap();
     let project_name = current_dir_buf.file_name().unwrap().to_str().unwrap();
     loop {
+        let executable = match exec_name.clone() {
+            None => String::from(project_name),
+            Some(string) => string,
+        };
         let running_status: ExitStatus =
-            Command::new(format!("{}/config/target/debug/{}", current_dir_buf.display(), project_name))
+            Command::new(format!("{}/config/target/debug/{}", current_dir_buf.display(), executable))
                 .status().unwrap();
         if !running_status.success() {
             println!("Running exited with: {}", running_status);
@@ -115,9 +119,13 @@ fn main() {
         return;
     }
     let command: &str = &args[1].clone();
+    let exec_name: Option<String> = match args.len() {
+        i if i > 2 => Some(args[2].clone()),
+        i => None,
+    };
     match command {
         "init" => copy_files(&args[2].clone()).unwrap(),
-        "run" => run_site_gen().unwrap(),
+        "run" => run_site_gen(exec_name).unwrap(),
         "compile" => compile().unwrap(),
         "update" => update().unwrap(),
         _ => print_usage(&program, opts),
