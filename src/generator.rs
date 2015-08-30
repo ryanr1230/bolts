@@ -18,19 +18,27 @@ fn determine_type(path: &Path) -> SiteGenResult<(&'static str, ParserType)> {
     };
 }
 
-fn create_out_file<'a>(path: &Path, new_extension: &'a str) -> SiteGenResult<File> {
+fn create_out_file<'a>(output_dir: Option<&'static str>,
+                       path: &Path,
+                       new_extension: &'a str) -> SiteGenResult<File> {
+
     let mut path_buf = path.to_path_buf();
     path_buf.set_extension(new_extension);
-    let file = try!(File::create(&path_buf.as_path()));
+    let relative_path_end = path_buf.to_string_lossy().into_owned();
+    let file = match output_dir {
+        Some(dir) => try!(File::create(Path::new(dir).join(relative_path_end))),
+        None => try!(File::create(&path_buf.as_path())),
+    };
     return Ok(file);
 }
 
-pub fn generate<'a>(path: &Path,
+pub fn generate<'a>(output_dir: Option<&'static str>,
+                    path: &Path,
                     layout_template: &Template,
                     context: &EvalContext) -> SiteGenResult<()>{
     let parser = determine_type(&path).unwrap();
     let bytevec = parser.1(&path).unwrap();
-    let mut out_file = create_out_file(path, parser.0).unwrap();
+    let mut out_file = create_out_file(output_dir, path, parser.0).unwrap();
     let utf8_output = String::from_utf8(bytevec).unwrap();
 
     let mut input_context_builder = HashMap::new();
