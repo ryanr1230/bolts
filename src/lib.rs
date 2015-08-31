@@ -12,17 +12,27 @@ use rumblebars::EvalContext;
 
 pub struct Bolts { output_dir: Option<&'static str> }
 
+pub enum ConfigPaths {
+    Directory(&'static str),
+    RecursiveDirectory(&'static str),
+    ListFiles(Vec<&'static str>),
+}
+
 impl Bolts {
 
     pub fn new() -> Bolts {
-        Bolts {output_dir: None}
+        Bolts { output_dir: None}
     }
 
     pub fn set_output_dir(&mut self, output_dir: &'static str) {
         self.output_dir = Some(output_dir);
     }
 
-    pub fn run(&self, layout_path_str: &'static str, partial_paths_str: Vec<&'static str>, markdown_files_str: Vec<&'static str>) -> SiteGenResult<()> {
+    pub fn run(&self,
+               layout_path_str: &'static str,
+               partial_paths_str: ConfigPaths,
+               markdown_files_str: ConfigPaths) -> SiteGenResult<()> {
+                   
         let mut context: EvalContext = EvalContext::new();
 
         let layout_path  = Path::new(layout_path_str);
