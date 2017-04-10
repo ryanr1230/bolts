@@ -4,7 +4,7 @@ a rust static site generator
 
 ### how to use:
 ```bash
- $ sudo make install
+ $ make install
  $ cd /directory/for/your/project/to/be/in
  $ bolts init PROJECT_NAME
  $ cd PROJECT_NAME
